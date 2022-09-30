@@ -1,23 +1,24 @@
 package pl.mjurek.cmd
 
 import akka.util.Helpers.isWindows
+import pl.mjurek.git.CommandCmdExecutor
 import java.io.File
 import java.io.IOException
 
-class CommandCmdExecutor private constructor(
+class CommandCmdExecutorImpl private constructor(
     val workingDir: File
-) {
+) : CommandCmdExecutor {
 
     companion object {
-        fun of(workingDir: File): CommandCmdExecutor {
+        fun of(workingDir: File): CommandCmdExecutorImpl {
             if (!workingDir.isDirectory) {
                 throw IllegalArgumentException("Not a directory")
             }
-            return CommandCmdExecutor(workingDir)
+            return CommandCmdExecutorImpl(workingDir)
         }
     }
 
-    fun runCommand(command: String): Sequence<String> {
+    override fun runCommand(command: String): Sequence<String> {
         return try {
             val proc = ProcessBuilder(*command.prepareCommand())
                 .directory(workingDir)
@@ -30,10 +31,11 @@ class CommandCmdExecutor private constructor(
         }
     }
 
-    fun execute(command: String) {
-        ProcessBuilder(*command.prepareCommand())
+    override fun execute(command: String) {
+        val process = ProcessBuilder(*command.prepareCommand())
             .directory(workingDir)
-            .start().waitFor()
+            .start()
+        process.waitFor()
     }
 
     private fun String.prepareCommand(): Array<String> {
