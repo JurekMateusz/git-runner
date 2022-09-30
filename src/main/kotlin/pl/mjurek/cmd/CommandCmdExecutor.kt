@@ -1,15 +1,12 @@
-package pl.mjurek
+package pl.mjurek.cmd
 
 import akka.util.Helpers.isWindows
-import pl.mjurek.util.loggerFor
 import java.io.File
 import java.io.IOException
-import java.util.stream.Stream
 
 class CommandCmdExecutor private constructor(
     val workingDir: File
 ) {
-    private val LOG = loggerFor(javaClass)
 
     companion object {
         fun of(workingDir: File): CommandCmdExecutor {
@@ -20,16 +17,23 @@ class CommandCmdExecutor private constructor(
         }
     }
 
-    fun runCommand(command: String): Stream<String> {
+    fun runCommand(command: String): Sequence<String> {
         return try {
             val proc = ProcessBuilder(*command.prepareCommand())
                 .directory(workingDir)
                 .start()
-            proc.inputStream.bufferedReader().lines()
+            val lines = proc.inputStream.bufferedReader().lines()
+            Sequence { lines.iterator() }
         } catch (e: IOException) {
             e.printStackTrace()
-            Stream.of()
+            emptySequence()
         }
+    }
+
+    fun execute(command: String) {
+        ProcessBuilder(*command.prepareCommand())
+            .directory(workingDir)
+            .start().waitFor()
     }
 
     private fun String.prepareCommand(): Array<String> {
