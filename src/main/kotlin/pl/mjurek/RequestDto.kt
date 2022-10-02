@@ -44,8 +44,9 @@ data class RequestDto(
         }
     }
 
-    fun test(seqResult: List<String>): TestResult? {
-        return seqResult.flatMap { line -> conditions.map { it.test(line) } }.find { it.isPassed() }
+    fun test(seqResult: List<String>): TestResult {
+        val tested = seqResult.flatMap { line -> conditions.map { it.test(line) } }.toSet()
+        return tested.find { it.isPassed() } ?: tested.find { !it.isPassed() }!!
     }
 }
 
@@ -54,9 +55,9 @@ data class PredicateTest(
 ) {
     fun test(line: String): TestResult {
         return if (predicate.test(line)) {
-            TestResult(TestStatus.PASSED, msg)
+            TestResult(TestStatus.PASSED, "Found given text: $msg")
         } else {
-            TestResult(TestStatus.FAIL, msg)
+            TestResult(TestStatus.FAIL, "Not found text: $msg")
         }
     }
 }

@@ -63,16 +63,17 @@ class GitRunner private constructor(
     private fun runCommand(commit: Commit, request: RequestDto) {
         val result = cmdExecutor.runCommand(request.command)
             .toList()
-        val textResult: TestResult? = request.test(result)
+        val textResult: TestResult = request.test(result)
         println(
             """
             Commit: ${commit.hash} Date: ${commit.date} $lineSep
-            ${textResult}
+            $textResult
             """
         )
         logFile.appendBytes(
             result.joinToString(separator = System.lineSeparator())
                 .toByteArray()
         )
+        logFile.appendText(lineSep + lineSep + lineSep + lineSep)
     }
 }

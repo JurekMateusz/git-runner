@@ -14,7 +14,6 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation 'com.typesafe.akka:akka-actor_2.11:2.5.32'
-    implementation 'io.vavr:vavr:0.10.4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
     testImplementation 'org.assertj:assertj-core:3.23.1'
