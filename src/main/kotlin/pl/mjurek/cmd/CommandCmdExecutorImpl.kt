@@ -31,11 +31,15 @@ class CommandCmdExecutorImpl private constructor(
         }
     }
 
-    override fun execute(command: String) {
+    override fun executeAndBlock(command: String): Sequence<String> {
         val process = ProcessBuilder(*command.prepareCommand())
             .directory(workingDir)
             .start()
         process.waitFor()
+        val output = process.inputStream.bufferedReader().lines()
+        val errorLines = process.errorStream.bufferedReader().lines()
+        return sequenceOf(output, errorLines)
+            .flatMap { Sequence { it.iterator() } }
     }
 
     private fun String.prepareCommand(): Array<String> {

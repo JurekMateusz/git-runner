@@ -1,7 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.6.10'
 }
-test{
+test {
     useJUnitPlatform()
 }
 group 'pl.mjurek'
@@ -14,9 +14,10 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation 'com.typesafe.akka:akka-actor_2.11:2.5.32'
-    implementation 'org.junit.jupiter:junit-jupiter:5.9.0'
-    implementation 'org.assertj:assertj-core:3.23.1'
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'io.vavr:vavr:0.10.4'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+    testImplementation 'org.assertj:assertj-core:3.23.1'
 }
 
 

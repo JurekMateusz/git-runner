@@ -16,7 +16,7 @@ internal class CommitMapperTest {
 
     @Test
     fun `Should map given string to dto`() {
-        val input = STRING_COMMIT.split("\n").map { it.trim() }.dropLast(1)
+        val input = STRING_COMMIT.split("\n").map { it.trim() }.dropLast(2)
 
         val mapped = mapper.mapToDataClass(input)
 
