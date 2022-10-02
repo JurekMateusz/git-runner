@@ -2,6 +2,8 @@ package pl.mjurek.git
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import pl.mjurek.gitrunner.git.dto.CommitDto
+import pl.mjurek.gitrunner.git.CommitMapper
 
 internal class CommitMapperTest {
     companion object {
@@ -21,7 +23,7 @@ internal class CommitMapperTest {
         val mapped = mapper.mapToDataClass(input)
 
         assertThat(mapped).usingRecursiveComparison().isEqualTo(
-            Commit(
+            CommitDto(
                 "e9ce57cfe1e2d8a5dc211aa95cbfb6396ac8439b",
                 "Mateusz Jurek <mateuszjurek98@outlook.com>",
                 "Fri Sep 30 16:57:52 2022 +0200"

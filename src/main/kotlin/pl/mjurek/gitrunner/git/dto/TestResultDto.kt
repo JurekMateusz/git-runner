@@ -1,6 +1,6 @@
-package pl.mjurek
+package pl.mjurek.gitrunner.git.dto
 
-data class TestResult(val status: TestStatus, val msg: String = "") {
+data class TestResultDto(val status: TestStatus, val msg: String = "") {
     fun isPassed(): Boolean {
         return status == TestStatus.PASSED
     }

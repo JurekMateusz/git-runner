@@ -1,5 +1,7 @@
-import pl.mjurek.RequestDto
-import pl.mjurek.git.GitRunner
+package pl.mjurek.gitrunner
+
+import pl.mjurek.gitrunner.git.dto.RequestDto
+import pl.mjurek.gitrunner.git.GitRunner
 
 fun main(args: Array<String>) {
     val request = RequestDto.of(args)

@@ -1,7 +1,7 @@
-package pl.mjurek.cmd
+package pl.mjurek.gitrunner.cmd
 
 import akka.util.Helpers.isWindows
-import pl.mjurek.git.CommandCmdExecutor
+import pl.mjurek.gitrunner.git.CommandCmdExecutor
 import java.io.File
 import java.io.IOException
 

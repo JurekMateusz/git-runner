@@ -1,15 +1,16 @@
-package pl.mjurek.git
+package pl.mjurek.gitrunner.git
 
+import pl.mjurek.gitrunner.git.dto.CommitDto
 import java.lang.instrument.IllegalClassFormatException
 
 class CommitMapper {
-    fun mapToDataClass(seq: Sequence<String>): Sequence<Commit> {
+    fun mapToDataClass(seq: Sequence<String>): Sequence<CommitDto> {
         return seq.filter { isCommit(it) || isAuthor(it) || isDate(it) }
             .chunked(3)
             .map { mapToDataClass(it) }
     }
 
-    fun mapToDataClass(log: List<String>): Commit {
+    fun mapToDataClass(log: List<String>): CommitDto {
         if (log.isEmpty()) {
             throw IllegalArgumentException()
         }
@@ -19,7 +20,7 @@ class CommitMapper {
         val commit = log[0].split(" ")[1]
         val author = log[1].split(": ")[1]
         val date = log[2].split(": ")[1].trim()
-        return Commit(commit, author, date)
+        return CommitDto(commit, author, date)
     }
 
     private fun isCommit(string: String): Boolean = string.startsWith("commit ")

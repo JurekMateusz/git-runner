@@ -1,12 +1,12 @@
-package pl.mjurek.git
+package pl.mjurek.gitrunner.git.dto
 
-data class GitCheckoutResult(val result: List<String>, val status: Status) {
+data class GitCheckoutResultDto(val result: List<String>, val status: Status) {
     companion object Factory {
         private const val GIT_ERROR = "error:"
-        fun of(seq: Sequence<String>): GitCheckoutResult {
+        fun of(seq: Sequence<String>): GitCheckoutResultDto {
             val result = seq.toList()
             val status = determineStatus(result);
-            return GitCheckoutResult(result, status)
+            return GitCheckoutResultDto(result, status)
         }
 
         private fun determineStatus(result: List<String>): Status {

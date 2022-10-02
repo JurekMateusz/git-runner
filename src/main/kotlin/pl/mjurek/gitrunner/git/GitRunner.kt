@@ -1,8 +1,10 @@
-package pl.mjurek.git
+package pl.mjurek.gitrunner.git
 
-import pl.mjurek.RequestDto
-import pl.mjurek.TestResult
-import pl.mjurek.cmd.CommandCmdExecutorImpl
+import pl.mjurek.gitrunner.cmd.CommandCmdExecutorImpl
+import pl.mjurek.gitrunner.git.dto.CommitDto
+import pl.mjurek.gitrunner.git.dto.GitCheckoutResultDto
+import pl.mjurek.gitrunner.git.dto.RequestDto
+import pl.mjurek.gitrunner.git.dto.TestResultDto
 import java.io.File
 import java.util.*
 
@@ -26,7 +28,7 @@ class GitRunner private constructor(
     }
 
     fun runCommandOnNumberOfCommits(request: RequestDto) {
-        val commits: Queue<Commit> = getCommits(request.numOfCommits)
+        val commits: Queue<CommitDto> = getCommits(request.numOfCommits)
         for (commit in commits) {
             val checkout = checkoutToCommit(commit)
             if (checkout.isFail()) {
@@ -36,34 +38,34 @@ class GitRunner private constructor(
         }
     }
 
-    private fun writeToLogsFile(checkoutResult: GitCheckoutResult) {
+    private fun writeToLogsFile(checkoutResult: GitCheckoutResultDto) {
         val byteArray = checkoutResult.result
             .joinToString(separator = System.lineSeparator())
             .toByteArray()
         logFile.appendBytes(byteArray)
     }
 
-    private fun getCommits(commitsFromHead: Int): Queue<Commit> {
+    private fun getCommits(commitsFromHead: Int): Queue<CommitDto> {
         val seq = cmdExecutor.runCommand(LOGS)
         return mapper.mapToDataClass(seq)
             .take(commitsFromHead)
             .toCollection(LinkedList())
     }
 
-    private fun checkoutToCommit(commit: Commit): GitCheckoutResult {
+    private fun checkoutToCommit(commit: CommitDto): GitCheckoutResultDto {
         val gitCheckoutCommand = "$CHECKOUT ${commit.hash}"
         val seqResult = cmdExecutor.executeAndBlock(gitCheckoutCommand)
-        val result = GitCheckoutResult.of(seqResult)
+        val result = GitCheckoutResultDto.of(seqResult)
         writeToLogsFile(result)
         return result
     }
 
     val lineSep = System.lineSeparator()
 
-    private fun runCommand(commit: Commit, request: RequestDto) {
+    private fun runCommand(commit: CommitDto, request: RequestDto) {
         val result = cmdExecutor.runCommand(request.command)
             .toList()
-        val textResult: TestResult = request.test(result)
+        val textResult: TestResultDto = request.test(result)
         println(
             """
             Commit: ${commit.hash} Date: ${commit.date} $lineSep

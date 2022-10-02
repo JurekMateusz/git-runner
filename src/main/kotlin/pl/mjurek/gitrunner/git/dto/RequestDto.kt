@@ -1,4 +1,4 @@
-package pl.mjurek
+package pl.mjurek.gitrunner.git.dto
 
 import java.util.function.Predicate
 
@@ -9,8 +9,8 @@ data class RequestDto(
         private val ALLOWED_ARGS = setOf("-c", "-dir", "-e", "-ne", "-exec")
 
         fun of(args: Array<String>): RequestDto {
+            if(args.isEmpty()) throw IllegalArgumentException("No given arguments.")
             val argsInMap = createMap(args)
-
             return RequestDto(
                 numOfCommits = argsInMap["-c"]!![0].toInt(),
                 workingDir = argsInMap["-dir"]!![0],
@@ -44,7 +44,7 @@ data class RequestDto(
         }
     }
 
-    fun test(seqResult: List<String>): TestResult {
+    fun test(seqResult: List<String>): TestResultDto {
         val tested = seqResult.flatMap { line -> conditions.map { it.test(line) } }.toSet()
         return tested.find { it.isPassed() } ?: tested.find { !it.isPassed() }!!
     }
@@ -53,11 +53,11 @@ data class RequestDto(
 data class PredicateTest(
     val predicate: Predicate<String>, val msg: String
 ) {
-    fun test(line: String): TestResult {
+    fun test(line: String): TestResultDto {
         return if (predicate.test(line)) {
-            TestResult(TestStatus.PASSED, "Found given text: $msg")
+            TestResultDto(TestStatus.PASSED, "Found given text: $msg")
         } else {
-            TestResult(TestStatus.FAIL, "Not found text: $msg")
+            TestResultDto(TestStatus.FAIL, "Not found text: $msg")
         }
     }
 }
