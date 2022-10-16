@@ -7,8 +7,8 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import pl.mjurek.gitrunner.git.dto.RequestDto
 import pl.mjurek.gitrunner.git.runner.GitRunner
+import pl.mjurek.gitrunner.git.runner.GitRunnerRequest
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -45,9 +45,10 @@ internal class GitRunnerTest {
 
     @Test
     fun `Should execute windows cmd reading command`() {
-        val cmd = "-c 4 -dir ${testedDir.absolutePath} -exec ${Commands.GET_CONTENT} $FILE"
-        val request = RequestDto.of(
-            cmd.split(" ")
+        val request = GitRunnerRequest(
+            numOfCommits = 4,
+            workingDir = testedDir.absolutePath,
+            command = "${Commands.GET_CONTENT} $FILE"
         )
         val gitRunner = GitRunner.of(request)
 

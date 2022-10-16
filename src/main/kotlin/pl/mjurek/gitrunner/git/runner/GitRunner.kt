@@ -3,16 +3,13 @@ package pl.mjurek.gitrunner.git.runner
 import mu.KotlinLogging
 import pl.mjurek.gitrunner.cmd.CommandCmdExecutorImpl
 import pl.mjurek.gitrunner.cmd.CommandCmdExecutor
-import pl.mjurek.gitrunner.git.dto.Commit
-import pl.mjurek.gitrunner.git.dto.CommitExecutionResult
-import pl.mjurek.gitrunner.git.dto.GitCheckoutResult
-import pl.mjurek.gitrunner.git.dto.RequestDto
+import pl.mjurek.gitrunner.git.dto.*
 import java.io.File
 import java.util.*
 
 class GitRunner private constructor(
     private val cmdExecutor: CommandCmdExecutor,
-    private val request: RequestDto,
+    private val request: GitRunnerRequest,
     private val mapper: CommitMapper = CommitMapper(),
 ) {
     var log = KotlinLogging.logger { }
@@ -20,7 +17,7 @@ class GitRunner private constructor(
     companion object {
         const val CHECKOUT: String = "git checkout"
         const val LOGS: String = "git log"
-        fun of(request: RequestDto): GitRunner {
+        fun of(request: GitRunnerRequest): GitRunner {
             val dir = File(request.workingDir)
             return GitRunner(
                 cmdExecutor = CommandCmdExecutorImpl.of(dir), request = request
