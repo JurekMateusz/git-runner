@@ -3,7 +3,9 @@ plugins {
 }
 test {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
 }
+
 group 'pl.mjurek'
 version '1.0-SNAPSHOT'
 
@@ -12,8 +14,13 @@ repositories {
 }
 
 dependencies {
+    //logging
+    implementation 'io.github.microutils:kotlin-logging-jvm:3.0.2'
+    implementation 'ch.qos.logback:logback-classic:1.4.4'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation 'com.typesafe.akka:akka-actor_2.11:2.5.32'
+
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
     testImplementation 'org.assertj:assertj-core:3.23.1'

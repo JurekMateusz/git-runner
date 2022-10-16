@@ -1,4 +1,4 @@
-package pl.mjurek.gitrunner.git
+package pl.mjurek.gitrunner.cmd
 
 interface CommandCmdExecutor {
     fun runCommand(command: String): Sequence<String>

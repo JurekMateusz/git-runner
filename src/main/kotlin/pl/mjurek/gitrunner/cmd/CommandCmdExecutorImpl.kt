@@ -1,7 +1,6 @@
 package pl.mjurek.gitrunner.cmd
 
 import akka.util.Helpers.isWindows
-import pl.mjurek.gitrunner.git.CommandCmdExecutor
 import java.io.File
 import java.io.IOException
 
@@ -23,8 +22,7 @@ class CommandCmdExecutorImpl private constructor(
             val proc = ProcessBuilder(*command.prepareCommand())
                 .directory(workingDir)
                 .start()
-            val lines = proc.inputStream.bufferedReader().lines()
-            Sequence { lines.iterator() }
+            return getOutput(proc)
         } catch (e: IOException) {
             e.printStackTrace()
             emptySequence()
@@ -36,6 +34,10 @@ class CommandCmdExecutorImpl private constructor(
             .directory(workingDir)
             .start()
         process.waitFor()
+        return getOutput(process)
+    }
+
+    private fun getOutput(process: Process): Sequence<String> {
         val output = process.inputStream.bufferedReader().lines()
         val errorLines = process.errorStream.bufferedReader().lines()
         return sequenceOf(output, errorLines)

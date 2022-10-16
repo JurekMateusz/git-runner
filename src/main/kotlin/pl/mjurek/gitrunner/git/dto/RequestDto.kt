@@ -8,13 +8,17 @@ data class RequestDto(
     companion object FACTORY {
         private val ALLOWED_ARGS = setOf("-c", "-dir", "-e", "-ne", "-exec")
 
+        fun of(args: List<String>): RequestDto {
+            return of(args.toTypedArray())
+        }
+
         fun of(args: Array<String>): RequestDto {
-            if(args.isEmpty()) throw IllegalArgumentException("No given arguments.")
+            if (args.isEmpty()) throw IllegalArgumentException("No given arguments.")
             val argsInMap = createMap(args)
             return RequestDto(
                 numOfCommits = argsInMap["-c"]!![0].toInt(),
                 workingDir = argsInMap["-dir"]!![0],
-                command = argsInMap["-exec"]!![0],
+                command = argsInMap["-exec"]!!.joinToString(separator = " ").replace("\"", ""),
                 conditions = createConditions(argsInMap["-e"]!!)
             )
         }
