@@ -1,19 +1,36 @@
 package pl.mjurek.gitrunner
 
-import pl.mjurek.gitrunner.git.FileLogWriterOutputConsumer
-import pl.mjurek.gitrunner.git.runner.GitRunner
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import pl.mjurek.gitrunner.git.consumer.FileLogWriterOutputConsumer
+import pl.mjurek.gitrunner.git.consumer.OutputConsumer
 import pl.mjurek.gitrunner.git.dto.CommitExecutionResult
-import pl.mjurek.gitrunner.git.runner.GitRunnerRequest
+import pl.mjurek.gitrunner.git.dto.ProcessingUnit
 import pl.mjurek.gitrunner.git.dto.RequestDto
+import pl.mjurek.gitrunner.git.runner.GitRunner
+import pl.mjurek.gitrunner.git.runner.GitRunnerRequest
 
+const val SIZE_CHUNK = 100
+
+val consumers: List<OutputConsumer> = listOf(FileLogWriterOutputConsumer())
 
 fun main(args: Array<String>) {
     val request = RequestDto.of(args)
     val runner = GitRunner.of(GitRunnerRequest.of(request))
-    val result: Sequence<CommitExecutionResult> = runner.execute()
+    runBlocking {
+        val result: Sequence<CommitExecutionResult> = runner.execute()
 
-    val fileLogWriter = FileLogWriterOutputConsumer()
-    fileLogWriter.consume(result)
+        val outputChunked: Sequence<ProcessingUnit> = result.flatMap { commitResult ->
+            commitResult.commandExecution.chunked(SIZE_CHUNK)
+                .map { ProcessingUnit(commitResult.commit, commitResult.checkoutResult, it) }
+        }
 
-
+        outputChunked.flatMap { unitWork ->
+            consumers.map {
+                launch {
+                    it.consume(unitWork)
+                }
+            }
+        }.forEach { it.join() }
+    }
 }
