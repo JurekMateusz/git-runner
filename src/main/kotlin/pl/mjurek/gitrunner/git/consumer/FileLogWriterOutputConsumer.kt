@@ -35,7 +35,11 @@ class FileLogWriterOutputConsumer : OutputConsumer {
     private fun createNewFile(unit: ProcessingUnit): File {
         val fileName = "$DIR_NAME${counter}_${unit.getShortHash()}.log"
         log.info { "Creating file $fileName" }
-        return Files.createFile(Path.of(fileName)).toFile()
+        val file = Path.of(fileName).toFile()
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        return file
     }
 
     private fun ProcessingUnit.getTextJoined(): String {
