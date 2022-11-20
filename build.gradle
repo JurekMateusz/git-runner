@@ -26,5 +26,15 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
     testImplementation 'org.assertj:assertj-core:3.23.1'
 }
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes 'Main-Class': 'pl.mjurek.gitrunner.MainKt'
+    }
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+apply plugin: 'kotlin'
+apply plugin: 'application'
 
+mainClassName = "pl.mjurek.gitrunner.MainKt"
 
